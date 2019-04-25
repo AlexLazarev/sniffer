@@ -5,21 +5,24 @@
 #include "command.h"
 #include "error.h"
 #include <arpa/inet.h>
+#include <unistd.h>
 
-void start() {
-    printf("start\n");
+void start(int socket) {
+    write(socket, "start", 5);
 }
 
-void stop() {
-    printf("stop\n");
+void stop(int socket) {
+    write(socket, "stop", 4);
 }
 
-void show(int argc, char **argv) {
+void show(int socket, int argc, char **argv) {
     struct in_addr addr;
+    char *buf;
 
     if (argc == 4 && strcmp(argv[3], "count") == 0) {
         if (inet_aton(argv[2], &addr)) {
-            printf("show %s\n", inet_ntoa(addr));
+            buf = inet_ntoa(addr);
+            write(socket, buf, strlen(buf));
         }
         else {
             error(ERROR_IP, argv[2]);
@@ -29,18 +32,21 @@ void show(int argc, char **argv) {
     }
 }
 
-void select(int argc, char **argv) {
+void select_iface(int socket, int argc, char **argv) {
     if (argc == 4 && strcmp(argv[2], "iface") == 0) {
-        printf("iface %s\n", argv[3]);
+        write(socket, argv[3], strlen(argv[3]));
     } else {
         usage();
     }
 }
 
-void stat(int argc, char **argv) {
+void stat(int socket, int argc, char **argv) {
     if (argc == 3) {
-        printf("stat %s\n", argv[2]);
-    } else {
+        write(socket, argv[2], strlen(argv[2]));
+    } else if (argc == 2) {
+        write(socket, "all", 3);
+    }
+    else {
         usage();
     }
 }

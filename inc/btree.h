@@ -18,8 +18,6 @@ struct          s_node
     t_node      *right;
 };
 
-extern t_node *root;
-
 void insert(char    *ip, t_node **node);
 t_node *search(char *ip, t_node *node);
 void preorder_print(t_node *node);

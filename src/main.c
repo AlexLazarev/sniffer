@@ -9,10 +9,10 @@ void get_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 
     ip = (t_ip*)(packet + SIZE_ETHERNET);
 
-    insert(inet_ntoa(ip->ip_src), &root);
+    insert(inet_ntoa(ip->ip_src), (t_node**)args);
 }
 
-static void start(char *dev, int num_packets, char *filter_exp) {
+static void start(char *dev, int num_packets, char *filter_exp, t_node *root) {
     char errbuf[PCAP_ERRBUF_SIZE];
     bpf_u_int32 mask;		/* The netmask of our sniffing device */
     bpf_u_int32 net;		/* The IP of our sniffing device */
@@ -31,7 +31,7 @@ static void start(char *dev, int num_packets, char *filter_exp) {
     if (pcap_setfilter(handle, &fp) == -1) {
         error(ERROR_INSTALL_FILTER, pcap_geterr(handle));
     }
-    pcap_loop(handle, num_packets, get_packet, NULL);
+    pcap_loop(handle, num_packets, get_packet, (u_char*)&root);
 
     pcap_freecode(&fp);
     pcap_close(handle);
@@ -45,25 +45,27 @@ void *sniffer(void *arg) {
     if (dev == NULL) {
         error(ERROR_NOT_FOUND_DEFAULT_DEVICE, errbuf);
     }
-    start(dev, num_packets, "ip");
+    start(dev, num_packets, "ip", (t_node*)arg);
     return NULL;
 }
 
-static void create_sniffer() {
+static void create_sniffer(t_node *root) {
     pthread_t handler;
 
-    if (pthread_create(&handler, NULL, sniffer, NULL)) {
+    if (pthread_create(&handler, NULL, sniffer, root)) {
         error(ERROR_CREATE_THREAD, NULL);
     }
     if (pthread_join(handler, NULL)) {
-        error(ERROR_CREATE_THREAD, NULL);
+        error(ERROR_JOIN_THREAD, NULL);
     }
 }
 
 
 int main(int argc, char **argv) {
+    t_node          *root = NULL;
+
     create_demon();
-    create_sniffer();
+    create_sniffer(root);
     create_server();
     preorder_print(root);
     printf("\nCapture complete.\n");

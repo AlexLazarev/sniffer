@@ -6,8 +6,6 @@
 #include <string.h>
 #include <stdio.h>
 
-t_node          *root = NULL;
-
 void insert(char    *key, t_node **node)
 {
     if (node) {
