@@ -2,6 +2,7 @@
 #include "packet.h"
 #include "error.h"
 #include "sniffer.h"
+#include <pthread.h>
 
 void get_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet) {
     t_ip        *ip;
@@ -30,16 +31,13 @@ static void start(char *dev, int num_packets, char *filter_exp) {
     if (pcap_setfilter(handle, &fp) == -1) {
         error(ERROR_INSTALL_FILTER, pcap_geterr(handle));
     }
-
     pcap_loop(handle, num_packets, get_packet, NULL);
 
     pcap_freecode(&fp);
     pcap_close(handle);
 }
 
-
-int main(int argc, char **argv) {
-    create_demon();
+void *sniffer(void *arg) {
     int num_packets = 10;
     char errbuf[PCAP_ERRBUF_SIZE];
     char *dev = pcap_lookupdev(errbuf);
@@ -47,9 +45,26 @@ int main(int argc, char **argv) {
     if (dev == NULL) {
         error(ERROR_NOT_FOUND_DEFAULT_DEVICE, errbuf);
     }
-
     start(dev, num_packets, "ip");
+    return NULL;
+}
 
+static void create_sniffer() {
+    pthread_t handler;
+
+    if (pthread_create(&handler, NULL, sniffer, NULL)) {
+        error(ERROR_CREATE_THREAD, NULL);
+    }
+    if (pthread_join(handler, NULL)) {
+        error(ERROR_CREATE_THREAD, NULL);
+    }
+}
+
+
+int main(int argc, char **argv) {
+    create_demon();
+    create_sniffer();
+    create_server();
     preorder_print(root);
     printf("\nCapture complete.\n");
     return 0;

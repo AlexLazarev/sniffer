@@ -1,14 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <string.h>
+#include "sniffer.h"
 
-# define PORT 4455
-#define MAX 80
 void func(int sock)
 {
 	char buff[MAX];
@@ -39,7 +30,7 @@ void func(int sock)
 }
 
 
-int main(int argc, char **argv) {
+void create_server() {
 	int sock;
 	int connection;
 	socklen_t len;
@@ -80,5 +71,4 @@ int main(int argc, char **argv) {
 	func(connection);
 
 	close(sock);
-	return 0;
 }

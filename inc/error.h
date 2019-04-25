@@ -9,12 +9,14 @@
 #include <stdlib.h>
 
 enum e_error {
-    ERROR_NOT_VALID_IP,
+    ERROR_IP,
     ERROR_NETMASK,
     ERROR_OPEN_DEVICE,
     ERROR_PARSE_FILTER,
     ERROR_INSTALL_FILTER,
-    ERROR_NOT_FOUND_DEFAULT_DEVICE
+    ERROR_NOT_FOUND_DEFAULT_DEVICE,
+    ERROR_CREATE_THREAD,
+    ERROR_JOIN_THREAD
 };
 
 void error(int key, char *info);

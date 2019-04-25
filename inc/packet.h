@@ -4,6 +4,7 @@
 
 #ifndef SNIFF_PACKET_H
 #define SNIFF_PACKET_H
+#include <netinet/in.h>
 
 #define SIZE_ETHERNET 14
 
@@ -16,7 +17,8 @@ typedef struct  sniff_ip {
     u_char ip_ttl;		/* time to live */
     u_char ip_p;		/* protocol */
     u_short ip_sum;		/* checksum */
-    struct in_addr ip_src,ip_dst; /* source and dest address */
+    struct in_addr ip_src;
+    struct in_addr ip_dst; /* source and dest address */
 }               t_ip;
 
 #endif //SNIFF_PACKET_H

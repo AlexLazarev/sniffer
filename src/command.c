@@ -3,6 +3,7 @@
 //
 
 #include "command.h"
+#include "error.h"
 #include <arpa/inet.h>
 
 void start() {
@@ -21,7 +22,7 @@ void show(int argc, char **argv) {
             printf("show %s\n", inet_ntoa(addr));
         }
         else {
-            error(NOT_VALID_IP, argv[2]);
+            error(ERROR_IP, argv[2]);
         }
     } else {
         usage();

@@ -18,7 +18,6 @@ static void signal_handler(int sig){
 }
 
 void create_demon() {
-
     id_t pid = fork();
 
     if (pid < 0) {

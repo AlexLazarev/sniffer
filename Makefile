@@ -1,11 +1,19 @@
-NAME			=	sniffer
+NAME_S			=	sniffer
+NAME_CLI        =   cli
 
-SRC				=	main.c \
+SRC_S			=	main.c \
                     binary_tree.c \
                     error_handler.c \
-                    daemon.c
+                    daemon.c \
+                    server.c
 
-OBJ				= $(addprefix $(OBJ_DIR), $(SRC:.c=.o))
+SRC_CLI         =   cli.c \
+                    error_handler.c \
+                    command.c \
+                    util.c
+
+OBJ_S				= $(addprefix $(OBJ_DIR), $(SRC_S:.c=.o))
+OBJ_CLI				= $(addprefix $(OBJ_DIR), $(SRC_CLI:.c=.o))
 
 SRC_DIR			= ./src/
 OBJ_DIR			= ./obj/
@@ -15,26 +23,28 @@ HEADER_FLAGS	= -I $(INC_DIR)
 
 HEADER			= $(INC_DIR)
 
-FLAGS			= -lpcap -g
-
-CFLAGS			= $(FLAGS) $(HEADER_FLAGS)
+FLAGS			= -pthread -lpcap
 
 CC				= clang
 
 all: install
 
-install: $(NAME)
+install: $(NAME_S) $(NAME_CLI)
 
-$(NAME): $(OBJ)
-	$(CC) $(OBJ) -o $(NAME) -lpcap $(HEADER_FALGS)
+$(NAME_S): $(OBJ_S)
+	$(CC) $(OBJ_S) -o $(NAME_S) $(FLAGS)
 
-$(OBJ): | $(OBJ_DIR)
+$(NAME_CLI): $(OBJ_CLI)
+	$(CC) $(OBJ_CLI) -o $(NAME_CLI)
+
+$(OBJ_S): | $(OBJ_DIR)
+$(OBJ_CLI): | $(OBJ_DIR)
 
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
 
 $(OBJ_DIR)%.o: %.c $(HEADER)
-	$(CC) -c $< -o $@ $(CFLAGS)
+	$(CC) -c $< -o $@ $(HEADER_FLAGS)
 
 clean:
 	rm -rf $(OBJ_DIR)
