@@ -10,13 +10,14 @@
 #include <stdio.h>
 
 # define SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+# define START 0
 
 typedef struct  s_command {
     char *name;
     void (*f)();
 }               t_command;
 
-void    start(int socket);
+void    start();
 void    stop(int socket);
 void    show(int socket, int argc, char **argv);
 void    select_iface(int socket, int argc, char **arv);

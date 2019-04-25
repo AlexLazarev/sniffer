@@ -7,8 +7,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-void start(int socket) {
-    write(socket, "start", 5);
+void start() {
+    system("echo \"pXxfuAaR\n\" | sudo -S ./sniffer");
 }
 
 void stop(int socket) {
