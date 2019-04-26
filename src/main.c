@@ -1,4 +1,3 @@
-#include "btree.h"
 #include "packet.h"
 #include "error.h"
 #include "sniffer.h"
@@ -66,7 +65,7 @@ int main(int argc, char **argv) {
 
     create_demon();
     create_sniffer(root);
-    create_server();
+    create_server(root);
     preorder_print(root);
     printf("\nCapture complete.\n");
     return 0;

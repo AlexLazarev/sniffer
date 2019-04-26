@@ -11,8 +11,7 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include "command.h"
-#define MAX 80
-#define PORT 4455
+#include "cli.h"
 
 static size_t get_index(int argc, char **argv) {
     for (size_t i = 0; i < SIZE(command); i++) {
@@ -53,7 +52,8 @@ int main(int argc, char **argv) {
             } else
                 printf("connected to the server..\n");
         }
-        command[index].f(socket, argc, argv);
+        printf("sock: %d index: %zu\n", sock, index);
+        command[index].f(sock, argc, argv);
         // close the socket
         close(sock);
     } else {

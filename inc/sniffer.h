@@ -17,12 +17,13 @@
 #include <arpa/inet.h>
 #include <netinet/ip.h>
 #include <string.h>
+#include "btree.h"
 
 
 #define PORT 4455
 #define MAX 80
 
 void create_demon();
-void create_server();
+void create_server(t_node *root);
 
 #endif //SNIFF_SNIFFER_H

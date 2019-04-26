@@ -1,23 +1,32 @@
 #include "sniffer.h"
 
-void func(int sock)
+static void listener(int sock, t_node *root)
 {
-    char buff[MAX];
-    bzero(buff, MAX);
+    char buf[MAX];
 
-    // read the message from client and copy it in buffer
-    read(sock, buff, sizeof(buff));
-    // print buffer which contains the client contents
-    printf("%s\n", buff);
+    while (1) {
+        bzero(buf, MAX);
 
-    // if msg contains "Exit" then server exit and chat ended.
-    if (strncmp("exit", buff, 4) == 0) {
-        printf("Server Exit...\n");
+        read(sock, buf, sizeof(buf));
+
+        if (strcmp("stop", buf) == 0) {
+            printf("Server Exit...\n");
+            break;
+        }
+        if (strcmp("show", buf) == 0) {
+            bzero(buf, MAX);
+            read(sock, buf, sizeof(buf));
+            printf("lel: %s\n", buf);
+            t_node *node = search(buf, root);
+            if (node) {
+                printf("%s %d\n", node->key, node->count);
+            }
+            write(sock, "$end$", 5);
+        }
     }
 }
 
-
-void create_server() {
+void create_server(t_node *root) {
 	int sock;
 	int connection;
 	socklen_t len;
@@ -54,7 +63,7 @@ void create_server() {
 		exit(1);	
 	}
 
-	func(connection);
+	listener(connection, root);
 
 	close(sock);
 }
